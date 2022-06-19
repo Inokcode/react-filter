@@ -1,14 +1,20 @@
-import { useId, useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
-import { Users } from "./users";
+import Table from "./Table";
+import axios from "axios";
 
 function App() {
-  // const id = useId();
-  // console.log(id);
   const [query, setQuery] = useState("");
-  // console.log(
-  //   Users.filter((user) => user.first_name.toLowerCase().includes("fe"))
-  // );
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res = await axios.get(`http://localhost:4000?q=${query}`);
+      setData(res.data);
+    };
+    if (query.length === 0 || query.length > 2) fetchUsers();
+  }, [query]);
+
   return (
     <div className="app">
       <input
@@ -17,7 +23,7 @@ function App() {
         className="search"
         onChange={(e) => setQuery(e.target.value)}
       />
-      <ul className="list">
+      {/* <ul className="list">
         {Users.filter((user) =>
           user.first_name.toLowerCase().includes(query)
         ).map((user) => (
@@ -26,7 +32,8 @@ function App() {
             {user.id}
           </li>
         ))}
-      </ul>
+      </ul> */}
+      <Table data={data} />
     </div>
   );
 }
